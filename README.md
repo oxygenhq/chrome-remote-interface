@@ -1,3 +1,6 @@
+Patched version of https://github.com/cyrus-and/chrome-remote-interface
+
+
 chrome-remote-interface    [![Build Status](https://travis-ci.org/cyrus-and/chrome-remote-interface.svg?branch=master)](https://travis-ci.org/cyrus-and/chrome-remote-interface)
 =======================
 
