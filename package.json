@@ -15,7 +15,7 @@
         "interface"
     ],
     "homepage": "https://github.com/cyrus-and/chrome-remote-interface",
-    "version": "0.27.2",
+    "version": "0.28.0",
     "repository": {
         "type": "git",
         "url": "git://github.com/cyrus-and/chrome-remote-interface.git"
@@ -47,10 +47,11 @@
         "babel-loader": "6.x.x",
         "babel-polyfill": "^6.26.0",
         "babel-preset-env": "^1.7.0",
-        "eslint": "^3.19.0",
+        "eslint": "^4.19.1",
         "json-loader": "^0.5.4",
-        "mocha": "5.x.x",
-        "webpack": "^1.13.3"
+        "mocha": "^5.2.0",
+        "webpack": "^4.35.3",
+        "webpack-cli": "^3.3.6"
     },
     "scripts": {
         "test": "./scripts/run-tests.sh",
