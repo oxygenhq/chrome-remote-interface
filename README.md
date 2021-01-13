@@ -67,12 +67,12 @@ following implementations:
 
 Implementation             | Protocol version   | [Protocol] | [List] | [New] | [Activate] | [Close] | [Version]
 ---------------------------|--------------------|------------|--------|-------|------------|---------|-----------
-[Google Chrome][1.1]       | [tip-of-tree][1.2] | yes¹       | yes    | yes   | yes        | yes     | yes
+[Chrome][1.1]              | [tip-of-tree][1.2] | yes¹       | yes    | yes   | yes        | yes     | yes
 [Opera][2.1]               | [tip-of-tree][2.2] | yes        | yes    | yes   | yes        | yes     | yes
 [Node.js][3.1] ([v6.3.0]+) | [node][3.2]        | yes        | no     | no    | no         | no      | yes
 [Safari (iOS)][4.1]        | [*partial*][4.2]   | no         | yes    | no    | no         | no      | no
-[Microsoft Edge][5.1]      | [*partial*][5.2]   | yes        | yes    | no    | no         | no      | yes
-[Mozilla Firefox][6.1]     | [*partial*][6.2]   | yes        | yes    | no    | yes        | yes     | yes
+[Edge][5.1]                | [*partial*][5.2]   | yes        | yes    | no    | no         | no      | yes
+[Firefox (Nightly)][6.1]   | [*partial*][6.2]   | yes        | yes    | no    | yes        | yes     | yes
 
 ¹ Not available on [Chrome for Android][chrome-mobile-protocol].
 
@@ -93,7 +93,7 @@ Implementation             | Protocol version   | [Protocol] | [List] | [New] | 
 [5.1]: #edge
 [5.2]: https://docs.microsoft.com/en-us/microsoft-edge/devtools-protocol/0.1/domains/
 
-[6.1]: #firefox
+[6.1]: #firefox-nightly
 [6.2]: https://firefox-source-docs.mozilla.org/remote/index.html
 
 [v6.3.0]: https://nodejs.org/en/blog/release/v6.3.0/
@@ -181,13 +181,13 @@ Please find more information [here][edge-devtools].
 
 [edge-devtools]: https://docs.microsoft.com/en-us/microsoft-edge/devtools-protocol/
 
-### Firefox
+### Firefox (Nightly)
 
-Start Firefox with the `--remote-debugger` option, for example:
+Start Firefox with the `--remote-debugging-port` option, for example:
 
-    firefox --remote-debugger
+    firefox --remote-debugging-port 9222
 
-Just make sure to set the `remote.enabled` preference to `true`.
+Bear in mind that this is an experimental feature of Firefox.
 
 ## Bundled client
 
@@ -219,37 +219,34 @@ $ chrome-remote-interface close 'b049bb56-de7d-424c-a331-6ae44cf7ae01'
 
 ### Inspection
 
-Using the `inspect` subcommand it is possible to
-perform [command execution](#clientdomainmethodparams-callback)
-and [event binding](#clientdomaineventcallback) in a REPL fashion. But unlike
-the regular API, events never return a promise, if the callback is omitted a
-default implementation is provided which allows to toggle the handler.
-
-Remember that the REPL interface provides completion.
+Using the `inspect` subcommand it is possible to perform [command execution](#clientdomainmethodparams-callback)
+and [event binding](#clientdomaineventcallback) in a REPL fashion that provides completion.
 
 Here is a sample session:
 
 ```js
 $ chrome-remote-interface inspect
 >>> Runtime.evaluate({expression: 'window.location.toString()'})
-...
 { result: { type: 'string', value: 'about:blank' } }
 >>> Page.enable()
-...
 {}
->>> Page.loadEventFired() // registered
-{ 'Page.loadEventFired': true }
->>> Page.loadEventFired() // unregistered
-{ 'Page.loadEventFired': false }
->>> Page.loadEventFired() // registered
-{ 'Page.loadEventFired': true }
+>>> Page.loadEventFired(console.log)
+[Function]
 >>> Page.navigate({url: 'https://github.com'})
-...
-{ frameId: '15174.1' }
-{ 'Page.loadEventFired': { timestamp: 46427.780513 } }
+{ frameId: 'E1657E22F06E6E0BE13DFA8130C20298',
+  loaderId: '439236ADE39978F98C20E8939A32D3A5' }
+>>> { timestamp: 7454.721299 } // from Page.loadEventFired
 >>> Runtime.evaluate({expression: 'window.location.toString()'})
-...
 { result: { type: 'string', value: 'https://github.com/' } }
+```
+
+Additionally there are some custom commands available:
+
+```js
+>>> .help
+[...]
+.reset    Remove all the registered event handlers
+.target   Display the current target
 ```
 
 ## Embedded documentation
@@ -722,6 +719,12 @@ notifications (see [`'event'`](#event-event)), for example:
 
 ```js
 client.on('Network.requestWillBeSent', console.log);
+```
+
+Additionally, the equivalent `<domain>.on('<method>', ...)` syntax is available, for example:
+
+```js
+client.Network.on('requestWillBeSent', console.log);
 ```
 
 #### Event: 'ready'
