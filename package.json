@@ -1,5 +1,5 @@
 {
-    "name": "ox-chrome-remote-interface",
+    "name": "@oxygenhq/chrome-remote-interface",
     "author": "Andrea Cardaci <cyrus.and@gmail.com>",
     "license": "MIT",
     "contributors": [
